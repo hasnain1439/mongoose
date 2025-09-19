@@ -1,20 +1,45 @@
-import express from 'express';
-import env from 'dotenv';
-import mongoose from 'mongoose';
-import enQueryModel from './enQuery/enQuery.model.js';
-env.config();
+import express from "express";
+import dotenv from "dotenv";
+import mongoose from "mongoose";
+import enqueryModel from "./enquery/emquery.model.js";
 
-const app = express();
+dotenv.config();
 
+let app = express();
 app.use(express.json());
 
-app.post('/api/insert-data', (req,res)=>{
-    res.send("runing")
-})
+app.get("/", (req, res) => {
+  res.send("this is running");
+});
+app.post("/insert-data", (req, res) => {
+  let { email, age, password } = req.body; // ✅ correct destructuring
 
-mongoose.connect(process.env.mongoLink).then(()=>{
-    console.log("connected to mongoDB");
-    app.listen(process.env.PORT, ()=>{
-        console.log(`app is listening on port ${process.env.PORT}`);
+  let insertData = new enqueryModel({
+    email,
+    age,
+    password,
+  });
+
+  insertData
+    .save()
+    .then(() => {
+      res.send({
+        status: "success",
+        message: "Your data successfully enter",
+      });
     })
-})
+    .catch((err) => {
+      res.send({
+        status: "reject",
+        message: "Your data isn't submitted",
+        error: err,
+      });
+    });
+});
+
+mongoose.connect(process.env.URL_DB).then(() => {
+  console.log("database is connected");
+  app.listen(process.env.PORT, () => {
+    console.log("yu app is runing");
+  });
+});
