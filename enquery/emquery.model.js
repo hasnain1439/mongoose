@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 let enqueryScheme = mongoose.Schema({
     email: {
         type: String,
-        required: true
+        required: true,
     },
     age: {
         type: String,
